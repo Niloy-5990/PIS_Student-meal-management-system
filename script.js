@@ -30,3 +30,10 @@ function calculateTotal()
     additionalMealDropdowns.forEach(dropdown => {
         additionalMealsPrice += parseFloat(dropdown.value) || 0;
     });
+    // Display additional meals price
+    document.getElementById('additional-meals-price').textContent = `Additional Meals Price: $${additionalMealsPrice}`;
+
+    // Calculate and display total price
+    let totalPrice = mainMealPrice + additionalMealsPrice;
+    document.getElementById('total-price').textContent = `Total Price: $${totalPrice}`;
+}
