@@ -76,3 +76,16 @@ function addMeal()
     // Recalculate the total price
     calculateTotal();
 }
+
+// Function to remove an additional meal dropdown
+function removeMeal(button) {
+    // Remove the dropdown container
+    let container = button.parentElement;
+    container.parentElement.removeChild(container);
+
+    // Recalculate the total price
+    calculateTotal();
+}
+
+// Populate dropdowns on page load
+document.addEventListener('DOMContentLoaded', populateAdditionalMealDropdown);
