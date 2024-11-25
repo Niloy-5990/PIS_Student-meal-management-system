@@ -12,4 +12,21 @@ function populateAdditionalMealDropdown()
         dropdown.appendChild(newOption);
     });
 }
+// Function to calculate the total price of meals
+function calculateTotal() 
+{
+    // Calculate predefined meal prices
+    let breakfastPrice = parseFloat(document.getElementById('breakfast-menu').value) || 0;
+    let lunchPrice = parseFloat(document.getElementById('lunch-menu').value) || 0;
+    let dinnerPrice = parseFloat(document.getElementById('dinner-menu').value) || 0;
+    let mainMealPrice = breakfastPrice + lunchPrice + dinnerPrice;
 
+    // Display main meal price
+    document.getElementById('main-meal-price').textContent = `Main Meal Price: $${mainMealPrice}`;
+
+    // Calculate additional meal prices
+    let additionalMealDropdowns = document.querySelectorAll('.additional-meal-dropdown');
+    let additionalMealsPrice = 0;
+    additionalMealDropdowns.forEach(dropdown => {
+        additionalMealsPrice += parseFloat(dropdown.value) || 0;
+    });
