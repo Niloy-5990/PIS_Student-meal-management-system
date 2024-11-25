@@ -48,3 +48,31 @@ function deleteMeal(mealId)
     // Recalculate the total price
     calculateTotal();
 }
+
+// Function to add a new additional meal option
+function addMeal() 
+{
+    let dropdown = document.getElementById('new-meal-dropdown');
+    let selectedValue = dropdown.value;
+    let selectedText = dropdown.options[dropdown.selectedIndex].text;
+
+    // Create a new dropdown for the additional meal
+    let dropdownContainer = document.getElementById('additional-meal-dropdowns');
+    let newDropdown = document.createElement('div');
+    newDropdown.className = 'additional-meal-container';
+
+    newDropdown.innerHTML = 
+    `
+        <select class="additional-meal-dropdown">
+            <option value="${selectedValue}">${selectedText}</option>
+            <option value="0">None</option>
+        </select>
+        <button onclick="removeMeal(this)">Remove</button>
+    `;
+
+    // Append the new dropdown
+    dropdownContainer.appendChild(newDropdown);
+
+    // Recalculate the total price
+    calculateTotal();
+}
