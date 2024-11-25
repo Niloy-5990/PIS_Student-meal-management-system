@@ -37,3 +37,14 @@ function calculateTotal()
     let totalPrice = mainMealPrice + additionalMealsPrice;
     document.getElementById('total-price').textContent = `Total Price: $${totalPrice}`;
 }
+
+// Function to delete a selected meal
+function deleteMeal(mealId) 
+{
+    // Reset the dropdown selection
+    let mealSelect = document.getElementById(mealId);
+    mealSelect.selectedIndex = -1;
+
+    // Recalculate the total price
+    calculateTotal();
+}
