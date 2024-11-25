@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Meal Management</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Student Meal Management</h1>
+        </header>
+        <main>
+            <!-- Predefined Meals Section -->
+            <section class="meal-selection">
+                <h2>Select Meals for the Day</h2>
+                <div class="meal" id="breakfast">
+                    <h3>Breakfast <i class="fas fa-utensils"></i></h3>
+                    <select id="breakfast-menu">
+                        <option value="5">Pancakes - $5</option>
+                        <option value="6">Omelette - $6</option>
+                        <option value="4">Toast & Jam - $4</option>
+                    </select>
+                    <button onclick="deleteMeal('breakfast-menu')">Delete Breakfast</button>
+                </div>
+                <div class="meal" id="lunch">
+                    <h3>Lunch <i class="fas fa-hamburger"></i></h3>
+                    <select id="lunch-menu">
+                        <option value="10">Grilled Chicken - $10</option>
+                        <option value="8">Vegetable Salad - $8</option>
+                        <option value="12">Steak - $12</option>
+                    </select>
+                    <button onclick="deleteMeal('lunch-menu')">Delete Lunch</button>
+                </div>
+                <div class="meal" id="dinner">
+                    <h3>Dinner <i class="fas fa-pizza-slice"></i></h3>
+                    <select id="dinner-menu">
+                        <option value="9">Pizza - $9</option>
+                        <option value="11">Pasta - $11</option>
+                        <option value="7">Soup - $7</option>
+                    </select>
+                    <button onclick="deleteMeal('dinner-menu')">Delete Dinner</button>
+                </div>
+                <p id="main-meal-price">Main Meal Price: $0</p>
+            </section>
+
+            <!-- Additional Meals Section -->
+            <section class="extras">
+                <h2>Manage Additional Meals</h2>
+                <div class="add-meal-form">
+                    <label for="new-meal-dropdown">Add from existing meals:</label>
+                    <select id="new-meal-dropdown">
+                        <!-- Options will populate dynamically -->
+                    </select>
+                    <button onclick="addMeal()">Add Meal</button>
+                </div>
+                <div id="additional-meal-dropdowns">
+                    <!-- Additional meal dropdowns will appear here -->
+                </div>
+                <p id="additional-meals-price">Additional Meals Price: $0</p>
+            </section>
+
+            <section class="total">
+                <h2>Total Price</h2>
+                <p id="total-price">Total Price: $0</p>
+            </section>
+
+            <section class="payment">
+                <h2>Payment Options</h2>
+                <label>
+                    <input type="radio" name="payment" value="advance" checked> Pay in Advance
+                </label>
+                <label>
+                    <input type="radio" name="payment" value="later"> Pay Later
+                </label>
+            </section>
+        </main>
+     
+    </div>
+    <!-- External JS -->
+    <script src="script.js"></script>
+</body>
+</html>
