@@ -14,3 +14,6 @@ Payment for the meals can be done in a month advance or after the current  month
 Fontawesome used as icons.
 
 Qunittest online integrated.
+
+
+Project documentation link :https://docs.google.com/document/d/12Qow8jsOmPrQYgfvulDLOQlqWVH9YHK6M5QUs761xTA/edit?pli=1&tab=t.0
