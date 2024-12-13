@@ -1,91 +1,169 @@
-// Populate additional meals dropdown with items from the main menus
-function populateAdditionalMealDropdown() 
-{
-    let dropdown = document.getElementById('new-meal-dropdown');
 
-    // Get options from all menus
-    let allOptions = [...document.querySelectorAll('#breakfast-menu option, #lunch-menu option, #dinner-menu option')];
-    allOptions.forEach(option => {
-        let newOption = document.createElement('option');
-        newOption.value = option.value;
-        newOption.text = option.text;
-        dropdown.appendChild(newOption);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const breakfastMenu = document.getElementById('breakfast-menu');
+    const lunchMenu = document.getElementById('lunch-menu');
+    const dinnerMenu = document.getElementById('dinner-menu');
+    const newMealDropdown = document.getElementById('new-meal-dropdown');
+    const additionalMealContainer = document.getElementById('additional-meal-dropdowns');
+    const mainMealPriceEl = document.getElementById('main-meal-price');
+    const additionalMealsPriceEl = document.getElementById('additional-meals-price');
+    const totalPriceEl = document.getElementById('total-price');
+
+    // Initialize menus to have blank first options
+    [breakfastMenu, lunchMenu, dinnerMenu].forEach(menu => {
+        const blankOption = document.createElement('option');
+        blankOption.value = 0;
+        blankOption.textContent = "Select a meal";
+        menu.insertBefore(blankOption, menu.firstChild);
+        menu.value = 0; // Set initial selection to blank
     });
-}
-// Function to calculate the total price of meals
-function calculateTotal() 
-{
-    // Calculate predefined meal prices
-    let breakfastPrice = parseFloat(document.getElementById('breakfast-menu').value) || 0;
-    let lunchPrice = parseFloat(document.getElementById('lunch-menu').value) || 0;
-    let dinnerPrice = parseFloat(document.getElementById('dinner-menu').value) || 0;
-    let mainMealPrice = breakfastPrice + lunchPrice + dinnerPrice;
 
-    // Display main meal price
-    document.getElementById('main-meal-price').textContent = `Main Meal Price: $${mainMealPrice}`;
+    // Populate the additional meal dropdown with options
+    const populateAdditionalMeals = () => {
+        const allOptions = [
+            ...breakfastMenu.options,
+            ...lunchMenu.options,
+            ...dinnerMenu.options
+        ];
+        newMealDropdown.innerHTML = ""; // Clear existing options
+        allOptions.forEach(option => {
+            if (option.value !== "0") {
+                const newOption = document.createElement('option');
+                newOption.value = option.value;
+                newOption.textContent = option.textContent;
+                newMealDropdown.appendChild(newOption);
+            }
+        });
+    };
 
-    // Calculate additional meal prices
-    let additionalMealDropdowns = document.querySelectorAll('.additional-meal-dropdown');
-    let additionalMealsPrice = 0;
-    additionalMealDropdowns.forEach(dropdown => {
-        additionalMealsPrice += parseFloat(dropdown.value) || 0;
+    populateAdditionalMeals();
+
+    // Calculate and update prices
+    const updatePrices = () => {
+        // Calculate Main Meal Price
+        const mainMealPrice = [
+            parseFloat(breakfastMenu.value),
+            parseFloat(lunchMenu.value),
+            parseFloat(dinnerMenu.value)
+        ].reduce((sum, price) => sum + price, 0);
+
+        // Calculate Additional Meals Price
+        const additionalMealPrices = Array.from(additionalMealContainer.querySelectorAll('select'))
+            .map(select => parseFloat(select.value))
+            .reduce((sum, price) => sum + price, 0);
+
+        // Update Total Price
+        const totalPrice = mainMealPrice + additionalMealPrices;
+
+        // Update DOM elements
+        mainMealPriceEl.textContent = `Main Meal Price: $${mainMealPrice.toFixed(2)}`;
+        additionalMealsPriceEl.textContent = `Additional Meals Price: $${additionalMealPrices.toFixed(2)}`;
+        totalPriceEl.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+    };
+
+    // Add event listeners to main menus
+    [breakfastMenu, lunchMenu, dinnerMenu].forEach(menu => {
+        menu.addEventListener('change', updatePrices);
     });
-    // Display additional meals price
-    document.getElementById('additional-meals-price').textContent = `Additional Meals Price: $${additionalMealsPrice}`;
 
-    // Calculate and display total price
-    let totalPrice = mainMealPrice + additionalMealsPrice;
-    document.getElementById('total-price').textContent = `Total Price: $${totalPrice}`;
-}
+    // Add additional meal
+    window.addMeal = () => {
+        const selectedMeal = newMealDropdown.value;
+        if (selectedMeal === "0") return; // Skip if blank
 
-// Function to delete a selected meal
-function deleteMeal(mealId) 
-{
-    // Reset the dropdown selection
-    let mealSelect = document.getElementById(mealId);
-    mealSelect.selectedIndex = -1;
+        const container = document.createElement('div');
+        container.className = 'additional-meal-container';
 
-    // Recalculate the total price
-    calculateTotal();
-}
+        const mealSelect = document.createElement('select');
+        mealSelect.innerHTML = newMealDropdown.innerHTML; // Copy options
+        mealSelect.value = selectedMeal;
 
-// Function to add a new additional meal option
-function addMeal() 
-{
-    let dropdown = document.getElementById('new-meal-dropdown');
-    let selectedValue = dropdown.value;
-    let selectedText = dropdown.options[dropdown.selectedIndex].text;
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Remove';
+        deleteButton.addEventListener('click', () => {
+            container.remove();
+            updatePrices();
+        });
 
-    // Create a new dropdown for the additional meal
-    let dropdownContainer = document.getElementById('additional-meal-dropdowns');
-    let newDropdown = document.createElement('div');
-    newDropdown.className = 'additional-meal-container';
+        container.appendChild(mealSelect);
+        container.appendChild(deleteButton);
+        additionalMealContainer.appendChild(container);
 
-    newDropdown.innerHTML = 
-    `
-        <select class="additional-meal-dropdown">
-            <option value="${selectedValue}">${selectedText}</option>
-            <option value="0">None</option>
-        </select>
-        <button onclick="removeMeal(this)">Remove</button>
+        // Reset dropdown and update prices
+        newMealDropdown.value = 0;
+        updatePrices();
+    };
+
+    // Delete a meal (for breakfast, lunch, or dinner)
+    window.deleteMeal = (menuId) => {
+        const menu = document.getElementById(menuId);
+        menu.value = 0; // Reset to blank
+        updatePrices();
+    };
+
+    // Initial price update
+    updatePrices();
+});
+
+function generateReceipt() {
+    // Get meal details
+    const getMealDetails = (menuId) => {
+        const menu = document.getElementById(menuId);
+        return menu.options[menu.selectedIndex]?.textContent || "Not selected";
+    };
+
+    const breakfast = getMealDetails('breakfast-menu');
+    const lunch = getMealDetails('lunch-menu');
+    const dinner = getMealDetails('dinner-menu');
+
+    // Get additional meals
+    const additionalMeals = Array.from(document.querySelectorAll('#additional-meal-dropdowns select'))
+        .map((select, index) => `Additional Meal ${index + 1}: ${select.options[select.selectedIndex]?.textContent || "Not selected"}`)
+        .join('\n');
+
+    // Get total price
+    const totalPrice = document.getElementById('total-price').textContent;
+
+    // Create unique receipt number and timestamp
+    const receiptNumber = `R${Date.now()}`;
+    const timestamp = new Date().toLocaleString();
+
+    // Format the receipt
+    const receiptContent = `
+        ----- Receipt -----
+        Receipt Number: ${receiptNumber}
+        Timestamp: ${timestamp}
+
+        Main Meals:
+        - Breakfast: ${breakfast}
+        - Lunch: ${lunch}
+        - Dinner: ${dinner}
+
+        Additional Meals:
+        ${additionalMeals || "None"}
+
+        ${totalPrice}
+        -------------------
     `;
 
-    // Append the new dropdown
-    dropdownContainer.appendChild(newDropdown);
-
-    // Recalculate the total price
-    calculateTotal();
+    // Display the receipt as a popup
+    alert(receiptContent);
 }
 
-// Function to remove an additional meal dropdown
-function removeMeal(button) {
-    // Remove the dropdown container
-    let container = button.parentElement;
-    container.parentElement.removeChild(container);
 
-    // Recalculate the total price
-    calculateTotal();
+
+//CRUD Testing
+
+function addMeal(mealList, newMeal) {
+    return [...mealList, newMeal];
 }
 
-// Populate dropdowns on page load
-document.addEventListener('DOMContentLoaded', populateAdditionalMealDropdown);
+function deleteMeal(mealList, id) {
+    return mealList.filter(meal => meal.id !== id);
+}
+
+function getMealDetails(mealList, id) {
+    return mealList.find(meal => meal.id === id) || null;
+}
+
